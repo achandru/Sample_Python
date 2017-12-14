@@ -1,5 +1,5 @@
 import os, shutil
-folder = '/home/chandru/Automation/Testing'
+folder = '/home/chandru/Automation/Enmetric'
 for the_file in os.listdir(folder):
 	file_path = os.path.join(folder, the_file)
 	try:

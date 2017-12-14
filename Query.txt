@@ -1,0 +1,57 @@
+-----------------------------------------------------------------
+              TOTAL OFFERS BY CATEGORIES
+
+For offers and catagory table
+
+select count(B.name), B.id, B.name  from youplus.offers A, youplus.categories B where A.category_id=B.id and B.name in('Food','Beverages','Fitness','Health','Other') group by B.name
+ 
+select count(B.name) As count, B.id, B.name from youplus.offers A, youplus.categories B where A.category_id=B.id group by B.name
+
+select sum(base.count) from (select count(B.name) As count, B.id, B.name from youplus.offers A, youplus.categories B where A.category_id=B.id group by B.name) as base
+
+For offers table
+
+SELECT category_id,count(*) FROM youplus.offers group by category_id 
+union all
+select "SUM" category_id, count(category_id) as Count from youplus.offers
+
+SELECT category_id,count(*),
+(COUNT(*) / (SELECT COUNT(*) FROM youplus.offers)) * 100
+FROM youplus.offers  group by category_id
+
+-----------------------------------------------------------------
+
+Select created_at, count(*) from partners where (( (DAYOFWEEK(created_at) >= 0) and (DAYOFWEEK(created_at) <= 5) ) or (DATE_FORMAT(created_at, "%T") > '23:59:00' AND DAYOFWEEK(created_at) = 6) ) as weekend and group by created_at
+select created_at,count(*) from partners where DAYOFWEEK(created_at)>=1 and DAYOFWEEK(created_at)<=5 or (DATE_FORMAT(created_at, "%T") > '23:59:00' AND DAYOFWEEK(created_at) = 5) ) group by week( created_at)
+
+SELECT category_id,count(*) FROM youplus.offers 
+where created_at >= timestamp '2016-10-08 00:00:00' 
+and created_at < timestamp '2016-10-14 00:00:00' 
+group by category_id
+
+
+-----------------------------------------------------------------------------------------------------------------
+                               MERCHANTS ACQUIRED
+
+select date(created_at+ interval (7-dayofweek(created_at)) day),count(*) 
+from partners 
+group by date(created_at+ interval (7-dayofweek(created_at)) day)
+order by 1
+
+---------------------------------------------------------------                                                                  		OFFERS  AVAILABLE BY CATEGOY                            
+
+SELECT o.category_id,c.name,
+date(o.created_at+ interval (7-dayofweek(o.created_at)) day),count(*) 
+FROM youplus.offers o, categories c
+where c.id=o.category_id  
+group by o.category_id,c.name,
+date(o.created_at+ interval (7-dayofweek(o.created_at)) day)
+order by 1,3
+
+SELECT ifnull(o.category_id,'NONE') as category_id, ifnull(c.name, 'NONE') as name,
+date(o.created_at+ interval (7-dayofweek(o.created_at)) day) as week_ending,count(*) 
+FROM youplus.offers o left outer join categories c
+on c.id=o.category_id  
+group by o.category_id,c.name,
+date(o.created_at+ interval (7-dayofweek(o.created_at)) day)
+order by 1,3
